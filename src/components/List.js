@@ -1,5 +1,8 @@
-import React, { useContext } from "react";
-import Store from "../context";
+import React from "react";
+
+import { updateItem } from '../actions'
+import { connect } from 'react-redux'
+
 import { Stack, DetailsList} from "@fluentui/react";
 import { ThemeProvider, makeStyles } from "@fluentui/react-theme-provider";
 import { PrimaryButton } from "@fluentui/react";
@@ -32,10 +35,7 @@ const useStyle = makeStyles({
 });
 
 
-
-
-
-export default function App() {
+function List({ Items, updateItem }) {
 
   const columns = [
     {
@@ -44,9 +44,6 @@ export default function App() {
       isIconOnly: true,
       minWidth: 16,
       maxWidth: 16,
-      onRender: () => {
-        return "I";
-      }
     },
     {
       key: "column2",
@@ -92,42 +89,38 @@ export default function App() {
       fieldName: "Complete",
       minWidth: 100,
       maxWidth: 100,
-      onRender: () => (
-        <PrimaryButton onClick={(item) => {
-          dispatch({ type: "COMPLETE", payload: item.values });}}>Complete</PrimaryButton>
-      )
-  
     },
   ];
 
   const classes = useStyle();
 
-  const { state, dispatch } = useContext(Store);
-
-  const handleComplete = (item) => {
-    dispatch({ type: "COMPLETE", payload: item });
-  }
-
-  console.log(state.todos);
-  const items = state.todos.map(item  => {
+  console.log(Items);
+  const items = Items.map(item  => {
     const container = {};
-    const cleanItem = JSON.parse(item);
-    container.title= cleanItem.Title;
-    container.description= cleanItem.Description;
-    container.status= cleanItem.status.text;
-    container.date= new Date(cleanItem.date).toString();
+    container.id= item.id;
+    container.title= item.Title;
+    container.description= item.Description;
+    container.status= item.status;
+    container.date= new Date(item.date).toString();
 
     return container;
   });
 
-  console.log(items);
+  function _onRenderItemColumn(item, index, column){
+    if (column.fieldName === 'Complete') {
+        return <PrimaryButton onClick={() => {
+          updateItem(item.id);}}>Complete</PrimaryButton>;
+    }
+    return item[column.fieldName];
+  }
+  
   return (
     <div className={classes.app}>
       <ThemeProvider>
         <div className={classes.content}>
           <Stack className={classes.stackRoot}>
             <div className={classes.container}>
-              <DetailsList columns={columns} items={items} />
+              <DetailsList columns={columns} items={items} onRenderItemColumn={_onRenderItemColumn }/>
             </div>
           </Stack>
         </div>
@@ -135,3 +128,13 @@ export default function App() {
     </div>
   );
 }
+
+const mapStateToProps = state => ({
+    Items: state.items
+})
+
+const mapDispatchToProps = dispatch => ({
+    updateItem: id => dispatch(updateItem(id))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(List)

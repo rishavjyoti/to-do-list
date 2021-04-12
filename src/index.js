@@ -3,10 +3,10 @@ import ReactDOM from "react-dom";
 
 import './index.css';
 
-import Store from "./context";
-import reducer from "./reducer";
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
-import { usePersistedContext, usePersistedReducer } from "./usePersist";
+import rootReducer from './reducers';
 
 import TodoHeader from "./components/Header.js";
 import TodoListHeader from "./components/ListHeader";
@@ -18,24 +18,19 @@ import './fonts/PTSans-Regular.ttf'
 
 function App() {
   // create a global store to store the state
-  const globalStore = usePersistedContext(useContext(Store), "state");
+  const store = createStore(rootReducer);
 
-  // `todos` will be a state manager to manage state.
-  const [state, dispatch] = usePersistedReducer(
-    useReducer(reducer, globalStore),
-    "state" // The localStorage key
-  );
 
   return (
     // State.Provider passes the state and dispatcher to the down
-    <Store.Provider value={{ state, dispatch }}>
+    <Provider store={ store }>
       <div>
       <TodoHeader/>
       <TodoForm />
       <TodoListHeader/>
       <TodoList />
       </div>
-    </Store.Provider>
+      </Provider>
   );
 }
 
