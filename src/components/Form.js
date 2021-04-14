@@ -33,14 +33,11 @@ function SimpleForm({dispatch}){
       alert("Please Enter Description");
     }
     else{
-      //const string = JSON.stringify(values);
       console.log(values);
       dispatch(addItems(values));
-      values='';
     }
   }
 
-  ///////////////////////////////////////////////
   return (
     <Stack as="div" horizontalAlign="center">
       <FormHeader/>
@@ -53,32 +50,28 @@ function SimpleForm({dispatch}){
         }}
         onSubmit={onLoginFormSubmit}
       >
-        {({ errors }) => {
-          return (
-            <Form style={{width:"40%", background_color:""}}>
-              <InputText name="Title" label="Title"/>
-              <InputText name="Description" label="Description"/>
-              <InputDate name="date" label="Due Date"/>
-              <InputSelect
-                name="status"
-                label="Select"
-                options={[
-                  { key: "", text: "" },
-                  { key: "0", text: "ToDo" },
-                  { key: "1", text: "Ongoing" },
-                  { key: "2", text: "Stalled" },
-                  { key: "3", text: "Done" }
-                ]}
-              />
-              <div style={{textAlign: "center"}}>
-                <PrimaryButton text="Submit" type="submit" />
-              </div>
-            </Form>
-          );
-        }}
+        <Form style={{width:"40%"}}>
+          <InputText name="Title" label="Title"/>
+          <InputText name="Description" label="Description"/>
+          <InputDate name="date" label="Due Date"/>
+          <InputSelect
+            name="status"
+            label="Select"
+            options={[
+              { key: "", text: "" },
+              { key: "0", text: "ToDo" },
+              { key: "1", text: "Ongoing" },
+              { key: "2", text: "Stalled" },
+              { key: "3", text: "Done" }
+            ]}
+          />
+          <div style={{textAlign: "center", marginTop: "15px"}}>
+            <PrimaryButton text="Submit" type="submit" />
+          </div>
+        </Form>
       </Formik>
     </Stack>
   );
 }
 
-export default connect()(SimpleForm)
+export default connect()(SimpleForm);

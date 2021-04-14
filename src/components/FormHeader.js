@@ -1,9 +1,12 @@
 import React from "react";
+import {Text} from '@fluentui/react';
 
 const Header = () => {
   return (
       <div >
-          <h3>Create a new task.</h3>
+          <Text variant={'xLarge'} block>
+            Create a new task.
+          </Text>
       </div>
   );
 };
