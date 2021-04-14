@@ -7,7 +7,10 @@ const items = (state = [], action) => {
                     id: action.id,
                     Title: action.Title,
                     Description: action.Description,
-                    status:action.status,
+                    status:{
+                        key:action.statusId,
+                        text: action.statusText,
+                    },
                     date:action.date,
                 }
             ]

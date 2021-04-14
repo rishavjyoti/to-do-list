@@ -1,9 +1,12 @@
 import React from "react";
+import {Text} from '@fluentui/react';
 
 const ListHeader = () => {
   return (
       <div style={{marginLeft:50}}>
-          <h3>Task List</h3>
+          <Text variant={'xLarge'} block>
+            Task List
+          </Text>
       </div>
   );
 };

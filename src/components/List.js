@@ -1,54 +1,18 @@
-import React from "react";
+import React, {useEffect} from "react";
 
-import { updateItem } from '../actions'
+import { updateItem, addItems} from '../actions'
 import { connect } from 'react-redux'
 
-import { Stack, DetailsList} from "@fluentui/react";
-import { ThemeProvider, makeStyles } from "@fluentui/react-theme-provider";
+import { DetailsList } from "@fluentui/react";
 import { PrimaryButton } from "@fluentui/react";
 
-
-const useStyle = makeStyles({
-  app: {
-    height: "100%",
-    ">div": {
-      display: "flex",
-      height: "100%",
-      flexDirection: "column"
-    },
-    textAlign: "center",
-  },
-  content: {
-    display: "flex"
-    //flex: 1
-  },
-  stackRoot: {
-    flex: 1
-  },
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    flex: 1,
-    maxWidth: "100%",
-    minHeight: 0
-  }
-});
-
-
-function List({ Items, updateItem }) {
+function List({Items, updateItem, addItems,}) {
 
   const columns = [
     {
       key: "column1",
-      name: "Type",
-      isIconOnly: true,
-      minWidth: 16,
-      maxWidth: 16,
-    },
-    {
-      key: "column2",
       name: "Title",
-      fieldName: "title",
+      fieldName: "title", 
       minWidth: 30,
       maxWidth: 200,
       isRowHeader: true,
@@ -56,35 +20,36 @@ function List({ Items, updateItem }) {
       isPadded: true
     },
     {
-      key: "column3",
+      key: "column2",
       name: "Description",
       fieldName: "description",
-      minWidth: 20,
-      maxWidth: 500,
+      minWidth: 40,
+      maxWidth: 400,
+      isRowHeader: true,
+      data: "string",
+      isPadded: true
+    },
+    {
+      key: "column3",
+      name: "Status",
+      fieldName: "status",
+      minWidth: 40,
+      maxWidth: 200,
       isRowHeader: true,
       data: "string",
       isPadded: true
     },
     {
       key: "column4",
-      name: "Status",
-      fieldName: "status",
-      minWidth: 30,
-      maxWidth: 100,
-      isRowHeader: true,
+      name: "Date",
+      fieldName: "date",
+      minWidth: 100,
+      maxWidth: 300,
       data: "string",
       isPadded: true
     },
     {
       key: "column5",
-      name: "Date",
-      fieldName: "date",
-      maxWidth: 100,
-      data: "string",
-      isPadded: true
-    },
-    {
-      key: "column6",
       name: "Complete",
       fieldName: "Complete",
       minWidth: 100,
@@ -92,15 +57,29 @@ function List({ Items, updateItem }) {
     },
   ];
 
-  const classes = useStyle();
+  useEffect(()=>{
 
-  console.log(Items);
+    const data = localStorage.getItem('data')
+    if(data){
+      console.log(JSON.parse(data))
+      JSON.parse(data).forEach(item => {
+        addItems(item);
+      })
+    }
+
+  },[addItems])
+    
+  useEffect(()=>{
+    console.log(Items)
+    localStorage.setItem('data',JSON.stringify(Items))
+  })
+
   const items = Items.map(item  => {
     const container = {};
     container.id= item.id;
     container.title= item.Title;
     container.description= item.Description;
-    container.status= item.status;
+    container.status= item.status.text;
     container.date= new Date(item.date).toString();
 
     return container;
@@ -109,23 +88,15 @@ function List({ Items, updateItem }) {
   function _onRenderItemColumn(item, index, column){
     if (column.fieldName === 'Complete') {
         return <PrimaryButton onClick={() => {
+          console.log('Complete');
           updateItem(item.id);}}>Complete</PrimaryButton>;
     }
     return item[column.fieldName];
   }
   
   return (
-    <div className={classes.app}>
-      <ThemeProvider>
-        <div className={classes.content}>
-          <Stack className={classes.stackRoot}>
-            <div className={classes.container}>
-              <DetailsList columns={columns} items={items} onRenderItemColumn={_onRenderItemColumn }/>
-            </div>
-          </Stack>
-        </div>
-      </ThemeProvider>
-    </div>
+    <DetailsList columns={columns} items={items} onRenderItemColumn={_onRenderItemColumn}>
+    </DetailsList>
   );
 }
 
@@ -134,7 +105,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    updateItem: id => dispatch(updateItem(id))
+    updateItem: id => dispatch(updateItem(id)),
+    addItems: data => dispatch(addItems(data)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(List)
+export default connect(mapStateToProps, mapDispatchToProps)(List);

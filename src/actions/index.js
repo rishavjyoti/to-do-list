@@ -5,7 +5,8 @@ export const addItems = item => ({
     id: incrementId++,
     Title: item.Title,
     Description: item.Description,
-    status:item.status.text,
+    statusId:item.status.key,
+    statusText:item.status.text,
     date:item.date,
 });
 
